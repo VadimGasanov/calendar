@@ -1,0 +1,15 @@
+.container{
+  position: relative;
+  width: 14.2857%;
+}
+
+.day{
+  padding: 0 5px 5px;
+  position: relative;
+  background-color: #fff;
+  border: 1px solid gray;
+}
+
+.day__number{
+  font-size: 20px;
+}
