@@ -1,0 +1,4 @@
+.arrow{
+  transform: rotate(90deg) scale(0.5, 0.6); 
+  cursor: pointer;
+}

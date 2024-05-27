@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import DayColumn from "./modules/DayColumn/DayColumn"
+import style from './SetMonth.module.css'
 
 
 const SetMonth = ({year, selectMonth}) => {
@@ -11,16 +12,16 @@ const SetMonth = ({year, selectMonth}) => {
       setMonth(JSON.parse(localStorage.getItem('localMonth')))
       setResultMonth(JSON.parse(localStorage.getItem('localResult')))
     } else{
-      let day = year.map(e => {
-        let arr = [[], [], []]
-        for(let i = 1; i <= e.days; i++){
-          arr[0].push({number: i, month: e.name, expenses: [[], [], [], [], [], [], [], [], []], income: [[], []]})
-        }
-  
-        
+      let day = year.map(e => {               //Первый элемент массива отвечает за создание пустых ячеек перед началом самих дней для выравнивания по дням недели
+        let arr = [[], [], []]                //Второй элемент-- сами дни.  Третий элемент заполняет оставшееся пространство
+
         let emptyPlace = e.firstDay === 0 ? 6 : e.firstDay - 1
         for(let i = 0; i < emptyPlace; i++){
           arr[1].push(i)
+        }
+
+        for(let i = 1; i <= e.days; i++){
+          arr[0].push({number: i, month: e.name, expenses: [[], [], [], [], [], [], [], [], []], income: [[], []], emptyDays: emptyPlace})
         }
         
         let fullCell = e.days + emptyPlace
@@ -28,14 +29,18 @@ const SetMonth = ({year, selectMonth}) => {
         for(let i = 0; i < emptyPlace; i++){
           arr[2].push(i)
         }
-  
+
         return arr
       })
       setMonth(day)
     }
+  }, [year])
+
+  const today = useMemo(() => {
+     return [new Date().getMonth(), new Date().getDate()]
   }, [])
 
-  const pay = (number, monthNumber, sum, section, category) => {
+  const pay = (number, monthNumber, sum, section, category) => {            //Функция добавляет новую денежную операцию в month и сохраняет значение  localStorage
     let newResult
 
     if(sum === 0 || sum ===''){
@@ -43,12 +48,12 @@ const SetMonth = ({year, selectMonth}) => {
     }
     let newCost = [...month[monthNumber]]
     if(section){
-      newCost[0][number].expenses[category].push(sum)
+      newCost[0][number].expenses[category].push(Number(sum))
       newResult = resultMonth.slice(0, monthNumber)
                     .concat([Number(resultMonth[monthNumber]) - Number(sum)])
                     .concat(resultMonth.slice(monthNumber + 1))
     } else{
-      newCost[0][number].income[category].push(sum)
+      newCost[0][number].income[category].push(Number(sum))
       newResult = resultMonth.slice(0, monthNumber)
                     .concat([Number(resultMonth[monthNumber]) + Number(sum)])
                     .concat(resultMonth.slice(monthNumber + 1))
@@ -103,31 +108,31 @@ const SetMonth = ({year, selectMonth}) => {
   }
 
   return (
-    <div style={{position: "relative", marginLeft: '6%', width: '90%'}}>
+    <div className={style.setMonth}>
       <div style={{display: 'flex', position: 'relative', left: `${-100 * selectMonth}%`, transition: '.2s'}}>
         {month.map((el, index) => {
           return (
-            <div style={{width: '100%', flexShrink: '0', opacity: `${selectMonth === index ? 1 : 0}`, transition: '.2s'}}>
-              <div style={{marginBottom: '20px', position: 'relative', left: '0'}}>{el[0][0].month}</div>
+            <div style={{maxWidth: '100%', flexShrink: '0', opacity: `${selectMonth === index ? 1 : 0}`, transition: '.2s'}} key={`${index}${el.month}setMonth`}>
+              <div className={style.setMonth__monthName}>{el[0][0].month}</div>
               
-              <div style={{border: '1px solid gray'}}>
-                <div style={{display: 'flex'}}>
-                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: '0', width: '14.2857%', border: '1px solid gray', height: '30px'}}>Понедельник</div>
+              <div className={style.setMonth__container}>
+                <div style={{display: 'flex', marginBottom: '20px'}}>
+                  <div className={style.setMonth__weekDay}>Пн</div>
 
-                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: '0', width: '14.2857%', border: '1px solid gray', height: '30px'}}>Вторник</div>
+                  <div className={style.setMonth__weekDay}>Вт</div>
 
-                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: '0', width: '14.2857%', border: '1px solid gray', height: '30px'}}>Среда</div>
+                  <div className={style.setMonth__weekDay}>Ср</div>
 
-                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: '0', width: '14.2857%', border: '1px solid gray', height: '30px'}}>Четверг</div>
+                  <div className={style.setMonth__weekDay}>Чт</div>
 
-                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: '0', width: '14.2857%', border: '1px solid gray', height: '30px'}}>Пятница</div>
+                  <div className={style.setMonth__weekDay}>Пт</div>
 
-                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: '0', width: '14.2857%', border: '1px solid gray', height: '30px'}}>Суббота</div>
+                  <div className={style.setMonth__weekDay} style={{color: '#ff6565'}}>Сб</div>
 
-                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: '0', width: '14.2857%', border: '1px solid gray', height: '30px'}}>Воскресенье</div>
+                  <div className={style.setMonth__weekDay} style={{color: '#ff6565'}}>Вс</div>
                 </div>
 
-                <div style={{display: "flex", flexWrap: 'wrap'}}>
+                <div className={style.setMonth__dayContainer}>
                   {el[1].map(e => {
                     return(
                       <DayColumn isDay={false}>
@@ -135,9 +140,32 @@ const SetMonth = ({year, selectMonth}) => {
                   )}
 
                   {el[0].map(e => {
+                    if(e.number === today[1] && index === today[0]){
+                      return (
+                      <DayColumn number={e.number} monthNumber={index} month={e.month} expenses={e.expenses}
+                       income={e.income} isDay={true} newProfit={pay} payDelete={payRemove} selectMonth={selectMonth === index} today={1} key={`${e.number}${e.month}`} />
+                      )
+                    } else if(((e.emptyDays + e.number) % 7 === 0) || ((e.emptyDays + e.number) % 7 === 6)){
+                      if(index < today[0] || (e.number < today[1] && index <= today[0])){
+                        return (
+                          <DayColumn number={e.number} monthNumber={index} month={e.month} expenses={e.expenses}
+                          income={e.income} isDay={true} newProfit={pay} payDelete={payRemove} selectMonth={selectMonth === index} today={-2} key={`${e.number}${e.month}`} />
+                        )
+                      }
+                       return(
+                        <DayColumn number={e.number} monthNumber={index} month={e.month} expenses={e.expenses}
+                         income={e.income} isDay={true} newProfit={pay} payDelete={payRemove} selectMonth={selectMonth === index} today={2} key={`${e.number}${e.month}`} />
+                        )
+                      } else if(index < today[0] || (e.number < today[1] && index <= today[0])){
+                       return (
+                        <DayColumn number={e.number} monthNumber={index} month={e.month} expenses={e.expenses}
+                         income={e.income} isDay={true} newProfit={pay} payDelete={payRemove} selectMonth={selectMonth === index} today={-1} key={`${e.number}${e.month}`}/>
+                       )
+                      }
                     return(
-                      <DayColumn index={index} number={e.number} monthNumber={index} month={e.month} expenses={e.expenses} income={e.income} isDay={true} newProfit={pay} payDelete={payRemove} key={`${e.number}${e.month}`}>
-                    </DayColumn>
+                      <DayColumn number={e.number} monthNumber={index} month={e.month} expenses={e.expenses}
+                       income={e.income} isDay={true} newProfit={pay} payDelete={payRemove} selectMonth={selectMonth === index} today={0} key={`${e.number}${e.month}`}>
+                      </DayColumn>
                     )}
                   )}
 
@@ -149,7 +177,7 @@ const SetMonth = ({year, selectMonth}) => {
                 </div>
               </div>
 
-              <div>Итого за месяц: {resultMonth[index]}</div>
+              <div className={style.setMonth__result}>Итого за месяц: {resultMonth[index]}</div>
             </div>)
         })}
       </div>

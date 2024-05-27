@@ -1,0 +1,44 @@
+.setMonth{
+  position: relative;
+  width: 100%;
+}
+.setMonth__container{
+  padding-top: 20px;
+  margin-bottom: 30px;
+  
+  -webkit-box-shadow: 0px 0px 13px 0px rgba(34, 60, 80, 0.2);
+  -moz-box-shadow: 0px 0px 13px 0px rgba(34, 60, 80, 0.2);
+  box-shadow: 0px 0px 13px 0px rgba(34, 60, 80, 0.2);
+}
+.setMonth__monthName{
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 35px;
+  letter-spacing: 11px;
+  
+  text-align: center;
+  margin-bottom: 55px
+}
+.setMonth__weekDay{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  cursor: default;
+
+  width: 14.2857%;
+  height: 30px;
+}
+.setMonth__dayContainer{
+  display: flex; 
+  flex-wrap: wrap;
+  height: 400px;
+
+  margin-bottom: 70px;
+}
+.setMonth__result{
+  font-size: 20px;
+  
+  padding-right: 11px;
+  text-align: end;
+}
