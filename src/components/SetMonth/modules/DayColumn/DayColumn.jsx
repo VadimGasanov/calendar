@@ -1,34 +1,12 @@
-import { useRef, useState, useEffect, useMemo } from "react"
+import { useRef, useState } from "react"
 import style from './DayColumn.module.css'
 import TaskForm from "../TaskForm/TaskForm.jsx"
 
-
-function getSum(arr){
-  try{
-    return arr.reduce((acc, item) => {
-      return Number(acc) + (typeof(item) === 'string' || typeof(item) === 'number' ? Number(item): getSum(item)) 
-    }, 0)
-  }
-  catch{
-    return 0
-  }
-}
-
-
-const DayColumn = ({number, month, monthNumber, expenses, income, isDay, newProfit, payDelete, selectMonth, today, ...props}) => {
+const DayColumn = ({number, month, monthNumber, expenses, income, isDay, newProfit, payDelete, selectMonth, today}) => {
   const [tasks, setTasks] = useState([])
   const [visible, setVisible] = useState(false)
-  const [size, setSize] = useState({height: '100%', width: '100%'})
   const ref = useRef()
 
-
-  const sumExpenses = useMemo(() => {
-    return getSum(expenses)
-  }, [String(expenses)])
-
-  const sumIncome = useMemo(() => {
-    return getSum(income)
-  }, [String(income)])
 
   const addTask = (newTask) => {
     setTasks([...tasks, newTask.current.value])
@@ -55,7 +33,7 @@ const DayColumn = ({number, month, monthNumber, expenses, income, isDay, newProf
         } 
       } 
       } className={classContainer.join(' ')}>
-      <div ref={ref} style={size} className={style.day}>
+      <div ref={ref} style={{height: '100%', width: '100%'}} className={style.day}>
         {
           isDay?
             <div>

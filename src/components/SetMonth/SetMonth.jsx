@@ -83,7 +83,7 @@ const SetMonth = ({year, selectMonth}) => {
         if(index !== monthNumber) {
           return el
         }
-        return el - Number(day.income[0][point])
+        return el - Number(day.income[category][point])
       })
       
       day.income[category] = day.income[category].filter((el, index) => index !== point)
